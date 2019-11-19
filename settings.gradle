@@ -1,0 +1,2 @@
+include ':app', ':okdanmaku'
+rootProject.name='okdanmaku_master'
