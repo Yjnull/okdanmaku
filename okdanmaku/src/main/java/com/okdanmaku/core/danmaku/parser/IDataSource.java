@@ -1,14 +1,10 @@
 package com.okdanmaku.core.danmaku.parser;
 
 /**
- * Created by yangya on 2019-10-14.
+ * Created by yangya on 2019-11-19.
  */
-public interface IDataSource<T> {
-    String SCHEME_HTTP = "http";
-    String SCHEME_HTTPS = "https";
-    String SCHEME_FILE = "file";
+public interface IDataSource {
 
-    public T data();
+    void release();
 
-    public void release();
 }
