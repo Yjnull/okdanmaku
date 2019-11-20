@@ -26,12 +26,12 @@ public class AndroidFileSource implements IDataSource {
 
     public InputStream mInputStream;
 
-    public AndroidFileSource(String filepath) {
-        fillStreamFromFile(new File(filepath));
-    }
-
     public AndroidFileSource(Uri uri) {
         fillStreamFromUri(uri);
+    }
+
+    public AndroidFileSource(String filepath) {
+        fillStreamFromFile(new File(filepath));
     }
 
     public AndroidFileSource(File file) {

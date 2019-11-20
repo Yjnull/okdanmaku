@@ -13,8 +13,10 @@ public class AndroidDisplayer implements IDisplayer {
 
     private static Paint sPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-    static {
-        // TODO: load font from file
+    private static Paint getPaint(DanmakuBase danmaku) {
+        sPaint.setTextSize(danmaku.textSize);
+        sPaint.setColor(danmaku.textColor);
+        return sPaint;
     }
 
     public Canvas mCanvas;
@@ -44,15 +46,18 @@ public class AndroidDisplayer implements IDisplayer {
     }
 
     @Override
-    public void drawDanmaku(DanmakuBase danmaku) {
+    public void draw(DanmakuBase danmaku) {
         if (mCanvas != null) {
-            mCanvas.drawText(danmaku.text, danmaku.getLeft(), danmaku.getTop(), getPaint(danmaku));
+            Paint paint = getPaint(danmaku);
+            mCanvas.drawText(danmaku.text, danmaku.getLeft(), danmaku.getTop() - paint.ascent(), paint);
         }
     }
 
-    private static Paint getPaint(DanmakuBase danmaku) {
-        sPaint.setTextSize(danmaku.textSize);
-        sPaint.setColor(danmaku.textColor);
-        return sPaint;
+    @Override
+    public void measure(DanmakuBase danmaku) {
+        Paint paint = getPaint(danmaku);
+        danmaku.paintWidth = paint.measureText(danmaku.text);
+        danmaku.paintHeight = paint.getTextSize();
     }
+
 }

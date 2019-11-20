@@ -14,7 +14,7 @@ import java.util.TreeSet;
  */
 public class Danmakus implements IDanmakus {
 
-    private Set<DanmakuBase> items;
+    public Set<DanmakuBase> items;
     private DanmakuBase startItem, endItem;
     private Danmakus subItems;
 
