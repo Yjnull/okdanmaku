@@ -1,8 +1,6 @@
 package com.okdanmaku.core.danmaku.parser;
 
-import com.okdanmaku.core.danmaku.model.DanmakuBase;
-
-import java.util.List;
+import com.okdanmaku.core.danmaku.model.android.Danmakus;
 
 /**
  * Created by yangya on 2019-11-19.
@@ -14,9 +12,9 @@ public abstract class DanmakuParserBase {
         mDataSource = source;
     }
 
-    public List<DanmakuBase> parse() {
+    public Danmakus parse() {
         return parse(mDataSource);
     }
 
-    public abstract List<DanmakuBase> parse(IDataSource source);
+    public abstract Danmakus parse(IDataSource source);
 }

@@ -6,6 +6,11 @@ package com.okdanmaku.core.danmaku.model;
 public abstract class DanmakuBase {
 
     /**
+     * 索引/编号
+     */
+    public int index;
+
+    /**
      * 文本
      */
     public String text;
@@ -23,7 +28,7 @@ public abstract class DanmakuBase {
     /**
      * 字体大小
      */
-    public int textSize;
+    public float textSize;
 
     /**
      * 占位宽度
