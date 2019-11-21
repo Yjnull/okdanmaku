@@ -2,21 +2,23 @@ package com.okdanmaku.core.ui;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
+
+import com.okdanmaku.core.danmaku.controller.DrawHelper;
+import com.okdanmaku.core.danmaku.controller.DrawTask;
+import com.okdanmaku.core.danmaku.model.DanmakuTimer;
+import com.okdanmaku.core.danmaku.renderer.android.DanmakuRenderer;
+import com.okdanmaku.core.utils.LogUtils;
 
 /**
  * Created by yangya on 2019-11-19.
@@ -24,10 +26,15 @@ import androidx.annotation.NonNull;
 public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
     private SurfaceHolder mSurfaceHolder;
-    private Paint mPaint;
     private HandlerThread mDrawThread;
     private DrawHandler mHandler;
     private long mStartTime;
+    private float cx, cy;
+    private long avgDuration;
+    private long maxDuration;
+    private DanmakuTimer mTimer;
+    private DanmakuRenderer mRenderer;
+    private DrawTask mDrawTask;
 
     public DanmakuSurfaceView(Context context) {
         super(context);
@@ -45,35 +52,45 @@ public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     }
 
     private void init() {
-        mPaint = new Paint();
-        mPaint.setColor(Color.RED);
-        mPaint.setTextSize(50);
         setZOrderOnTop(true);
         mSurfaceHolder = getHolder();
         mSurfaceHolder.addCallback(this);
         mSurfaceHolder.setFormat(PixelFormat.TRANSPARENT);
-    }
-
-    private void drawTime() {
-        drawCanvas(System.currentTimeMillis() + "ms");
-    }
-
-    void drawCanvas(String text) {
-        Canvas canvas = mSurfaceHolder.lockCanvas();
-        if (canvas != null) {
-            e("cycle:" + (System.currentTimeMillis() - mStartTime));
-            mStartTime = System.currentTimeMillis();
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-            drawText(canvas, text);
-            e("draw time:" + (System.currentTimeMillis() - mStartTime));
-            mSurfaceHolder.unlockCanvasAndPost(canvas);
+        if (mTimer == null) {
+            mTimer = new DanmakuTimer();
         }
     }
 
-    void drawText(Canvas canvas, String text) {
-        canvas.drawText(text, 50, 50, mPaint);
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        LogUtils.d("surfaceCreated");
+        startDraw();
     }
 
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        LogUtils.d("surfaceChanged = " + format + ", " + width + ", " + height);
+    }
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        quitDrawThread();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        quitDrawThread();
+        return true;
+    }
+
+    private void updateTimer() {
+        mTimer.curMillisecond += 16;
+    }
+
+    private void updateCxCy(float x, float y) {
+        cx = x;
+        cy = y;
+    }
     private void startDraw() {
         mDrawThread = new HandlerThread("Thread#draw");
         mDrawThread.start();
@@ -92,26 +109,22 @@ public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Cal
         }
     }
 
-    @Override
-    public void surfaceCreated(SurfaceHolder holder) {
-        d("surfaceCreated");
-        startDraw();
-    }
+    /**
+     * 工作在 Thread#draw 线程
+     */
+    void drawSomething() {
+        Canvas canvas = mSurfaceHolder.lockCanvas();
+        if (canvas != null) {
+            DrawHelper.clearCanvas(canvas);
+            DrawHelper.drawDuration(canvas, "sssss");
+            if (mDrawTask == null) {
+                mDrawTask = new DrawTask(mTimer, getContext());
+            }
+            mDrawTask.draw(canvas);
 
-    @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        d("surfaceChanged = " + format + ", " + width + ", " + height);
-    }
-
-    @Override
-    public void surfaceDestroyed(SurfaceHolder holder) {
-
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        quitDrawThread();
-        return super.onTouchEvent(event);
+            DrawHelper.drawCircle(canvas, 100, 100);
+            mSurfaceHolder.unlockCanvasAndPost(canvas);
+        }
     }
 
     private class DrawHandler extends Handler {
@@ -139,19 +152,13 @@ public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Cal
                     break;
                 case UPDATE:
                     if (!isQuit) {
-                        drawTime();
-                        sendEmptyMessageDelayed(UPDATE, 500);
+                        drawSomething();
+                        updateTimer();
+                        sendEmptyMessageDelayed(UPDATE, 16);
                     }
                     break;
             }
         }
-    }
-
-    private void d(String text) {
-        Log.d("yjnull", Thread.currentThread().getName() + "-> " + text);
-    }
-    private void e(String text) {
-        Log.e("yjnull", Thread.currentThread().getName() + " -> " + text);
     }
 
 }

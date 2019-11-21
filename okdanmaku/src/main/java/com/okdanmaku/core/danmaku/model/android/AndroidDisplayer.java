@@ -1,22 +1,24 @@
 package com.okdanmaku.core.danmaku.model.android;
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.okdanmaku.core.danmaku.model.DanmakuBase;
 import com.okdanmaku.core.danmaku.model.IDisplayer;
+import com.okdanmaku.core.utils.LogUtils;
 
 /**
  * Created by yangya on 2019-11-19.
  */
 public class AndroidDisplayer implements IDisplayer {
 
-    private static Paint sPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    public static Paint sPaint;
 
-    private static Paint getPaint(DanmakuBase danmaku) {
-        sPaint.setTextSize(danmaku.textSize);
-        sPaint.setColor(danmaku.textColor);
-        return sPaint;
+    static {
+        sPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        sPaint.setColor(Color.RED);
+        sPaint.setTextSize(50);
     }
 
     public Canvas mCanvas;
@@ -27,6 +29,13 @@ public class AndroidDisplayer implements IDisplayer {
 
     public AndroidDisplayer(Canvas canvas) {
         mCanvas = canvas;
+    }
+
+    private static Paint getPaint(DanmakuBase danmaku) {
+        //TODO: fixme
+        sPaint.setTextSize(danmaku.textSize * 2);
+        sPaint.setColor(danmaku.textColor);
+        return sPaint;
     }
 
     @Override
@@ -58,6 +67,7 @@ public class AndroidDisplayer implements IDisplayer {
         Paint paint = getPaint(danmaku);
         danmaku.paintWidth = paint.measureText(danmaku.text);
         danmaku.paintHeight = paint.getTextSize();
+        LogUtils.d(danmaku.paintWidth + ", paint height = " + danmaku.paintHeight);
     }
 
 }

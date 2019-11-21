@@ -38,6 +38,10 @@ public class AndroidFileSource implements IDataSource {
         fillStreamFromFile(file);
     }
 
+    public AndroidFileSource(InputStream inputStream) {
+        mInputStream = inputStream;
+    }
+
     private void fillStreamFromFile(File file) {
         try {
             mInputStream = new BufferedInputStream(new FileInputStream(file));

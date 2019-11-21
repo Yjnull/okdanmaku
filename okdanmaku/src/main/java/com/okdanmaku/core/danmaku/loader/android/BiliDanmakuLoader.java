@@ -6,13 +6,15 @@ import com.okdanmaku.core.danmaku.loader.ILoader;
 import com.okdanmaku.core.danmaku.parser.IDataSource;
 import com.okdanmaku.core.danmaku.parser.android.AndroidFileSource;
 
+import java.io.InputStream;
+
 /**
  * Created by yangya on 2019-11-20.
  */
 public class BiliDanmakuLoader implements ILoader {
 
     private static BiliDanmakuLoader _instance;
-
+    private BiliDanmakuLoader() { }
     public static BiliDanmakuLoader instance() {
         if (_instance == null) {
             _instance = new BiliDanmakuLoader();
@@ -21,23 +23,29 @@ public class BiliDanmakuLoader implements ILoader {
     }
 
     private Uri uri;
+    private AndroidFileSource mSource;
 
-    private BiliDanmakuLoader() { }
+    @Override
+    public IDataSource getDataSource() {
+        return mSource;
+    }
+
+    public void load(InputStream inputStream) {
+        mSource = new AndroidFileSource(inputStream);
+    }
 
     /**
      * @param uri 弹幕文件地址(http:// file://)
      * @return 数据源
      */
-    @Override
-    public IDataSource load(String uri) {
+    public void load(String uri) {
         try {
             this.uri = Uri.parse(uri);
-            return new AndroidFileSource(this.uri);
+            mSource = new AndroidFileSource(this.uri);
         } catch (Exception ignore) {
 
         }
 
-        return null;
     }
 
 }

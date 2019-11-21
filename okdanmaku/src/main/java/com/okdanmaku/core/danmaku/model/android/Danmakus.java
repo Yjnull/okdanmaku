@@ -66,10 +66,10 @@ public class Danmakus implements IDanmakus {
         public int compare(DanmakuBase o1, DanmakuBase o2) {
             long delta = o1.time - o2.time;
             if (delta > 0) {
-                // 说明 o1.time 大于 o2，意味着 o1 比 o2 晚显示，所以 o1 < o2
-                return -1;
-            } else if (delta < 0) {
+                // 说明 o1.time 大于 o2.time，意味着 o1 比 o2 晚显示
                 return 1;
+            } else if (delta < 0) {
+                return -1;
             }
 
             if (o1.text == null && o2.text == null) {

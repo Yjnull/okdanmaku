@@ -7,6 +7,6 @@ import com.okdanmaku.core.danmaku.parser.IDataSource;
  */
 public interface ILoader {
 
-    IDataSource load(String uri);
+    IDataSource getDataSource();
 
 }
