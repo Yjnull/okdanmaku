@@ -6,7 +6,6 @@ import android.graphics.Paint;
 
 import com.okdanmaku.core.danmaku.model.DanmakuBase;
 import com.okdanmaku.core.danmaku.model.IDisplayer;
-import com.okdanmaku.core.utils.LogUtils;
 
 /**
  * Created by yangya on 2019-11-19.
@@ -55,19 +54,19 @@ public class AndroidDisplayer implements IDisplayer {
     }
 
     @Override
-    public void draw(DanmakuBase danmaku) {
-        if (mCanvas != null) {
-            Paint paint = getPaint(danmaku);
-            mCanvas.drawText(danmaku.text, danmaku.getLeft(), danmaku.getTop() - paint.ascent(), paint);
-        }
-    }
-
-    @Override
     public void measure(DanmakuBase danmaku) {
         Paint paint = getPaint(danmaku);
         danmaku.paintWidth = paint.measureText(danmaku.text);
         danmaku.paintHeight = paint.getTextSize();
-        LogUtils.d(danmaku.paintWidth + ", paint height = " + danmaku.paintHeight);
+    }
+
+    @Override
+    public void draw(DanmakuBase danmaku) {
+        if (mCanvas != null) {
+            Paint paint = getPaint(danmaku);
+            // paint.ascent = -46.38672 when paint.textSize = 50
+            mCanvas.drawText(danmaku.text, danmaku.getLeft(), danmaku.getTop() - paint.ascent(), paint);
+        }
     }
 
 }

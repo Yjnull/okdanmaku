@@ -20,7 +20,7 @@ public class DanmakuRenderer extends Renderer {
                 drawItem.measure(disp);
             }
             // layout
-            drawItem.layout(disp, 0, 100);
+            drawItem.layout(disp, 0, drawItem.index * 10 % disp.getHeight());
             // draw
             drawItem.draw(disp);
         }

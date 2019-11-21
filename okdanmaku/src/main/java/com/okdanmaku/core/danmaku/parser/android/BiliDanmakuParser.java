@@ -38,6 +38,8 @@ public class BiliDanmakuParser extends DanmakuParserBase {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                dataSource.release();
             }
         }
 
