@@ -24,6 +24,11 @@ public class BiliDanmakuParser extends DanmakuParserBase {
         System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
     }
 
+    private final float dispWidth;
+    public BiliDanmakuParser(int width) {
+        this.dispWidth = width;
+    }
+
     @Override
     public Danmakus parse(IDataSource dataSource) {
         if (dataSource != null) {
@@ -95,7 +100,7 @@ public class BiliDanmakuParser extends DanmakuParserBase {
                     float textSize = Float.parseFloat(values[2]); // 字体大小
                     int color = Integer.parseInt(values[3]) | 0xFF000000; // 颜色
                     // int poolType = Integer.parseInt(values[5]); // 弹幕池类型（忽略)
-                    item = BiliDanmakuFactory.createDanmaku(type);
+                    item = BiliDanmakuFactory.createDanmaku(type, dispWidth);
                     if (item != null) {
                         item.time = time;
                         item.textSize = textSize;

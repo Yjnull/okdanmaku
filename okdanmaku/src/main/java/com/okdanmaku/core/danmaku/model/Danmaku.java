@@ -33,4 +33,9 @@ public class Danmaku extends DanmakuBase {
     public float getBottom() {
         return 0;
     }
+
+    @Override
+    public boolean isShown() {
+        return false;
+    }
 }

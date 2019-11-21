@@ -11,6 +11,7 @@ import com.okdanmaku.core.danmaku.model.DanmakuTimer;
 import com.okdanmaku.core.danmaku.model.IDanmakus;
 import com.okdanmaku.core.danmaku.model.android.AndroidDisplayer;
 import com.okdanmaku.core.danmaku.model.android.Danmakus;
+import com.okdanmaku.core.danmaku.parser.BiliDanmakuFactory;
 import com.okdanmaku.core.danmaku.parser.IDataSource;
 import com.okdanmaku.core.danmaku.parser.android.BiliDanmakuParser;
 import com.okdanmaku.core.danmaku.renderer.IRenderer;
@@ -32,16 +33,19 @@ public class DrawTask {
     private IDataSource mDataSource;
     private BiliDanmakuParser mParser;
     private Danmakus mDanmakuList;
+    private final long duration;
 
     /**
      * 构造函数初始化，并通过 Loader 和 Parser 将 R.raw.comments 解析成 Danmakus
      */
-    public DrawTask(DanmakuTimer timer, Context context) {
+    public DrawTask(DanmakuTimer timer, Context context, int dispW, int dispH) {
         mTimer = timer;
-        mContext = context;
-        loadBiliDanmakus(context.getResources().openRawResource(R.raw.comments));
         mRenderer = new DanmakuRenderer();
         mDisp = new AndroidDisplayer();
+        mDisp.width = dispW;
+        mDisp.height = dispH;
+        duration = BiliDanmakuFactory.calDuration(dispW);
+        loadBiliDanmakus(context.getResources().openRawResource(R.raw.comments));
     }
 
     private void loadBiliDanmakus(InputStream stream) {
@@ -51,10 +55,11 @@ public class DrawTask {
         }
         mLoader.load(stream);
         mDataSource = mLoader.getDataSource();
-        mParser = new BiliDanmakuParser();
+        mParser = new BiliDanmakuParser(mDisp.width);
         mParser.load(mDataSource);
         mDanmakuList = mParser.parse();
 
+        // 给所有 DanmakuBase 设置 DanmakuSurfaceView 的 Timer
         for (DanmakuBase itr : mDanmakuList.items) {
             itr.setTimer(mTimer);
         }
@@ -66,9 +71,9 @@ public class DrawTask {
     public void draw(Canvas canvas) {
         if (mDanmakuList != null) {
             long curMills = mTimer.curMillisecond;
-            IDanmakus danmakus = mDanmakuList.sub(curMills - 4000, curMills + 4000);
+            IDanmakus danmakus = mDanmakuList.sub(curMills - duration, curMills + duration);
             // 显示器有了画布
-            mDisp.mCanvas = canvas;
+            mDisp.init(canvas);
             if (danmakus != null) {
                 // 让渲染器去画该弹幕
                 mRenderer.draw(mDisp, danmakus);

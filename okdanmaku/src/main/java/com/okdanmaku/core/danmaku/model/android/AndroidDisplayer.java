@@ -21,36 +21,31 @@ public class AndroidDisplayer implements IDisplayer {
     }
 
     public Canvas mCanvas;
-
-    public AndroidDisplayer() {
-        this(null);
-    }
-
-    public AndroidDisplayer(Canvas canvas) {
-        mCanvas = canvas;
-    }
+    public int width;
+    public int height;
 
     private static Paint getPaint(DanmakuBase danmaku) {
-        //TODO: fixme
         sPaint.setTextSize(danmaku.textSize * 2);
         sPaint.setColor(danmaku.textColor);
         return sPaint;
     }
 
+    public void init(Canvas c) {
+        mCanvas = c;
+        if (c != null) {
+            width = c.getWidth();
+            height = c.getHeight();
+        }
+    }
+
     @Override
     public int getWidth() {
-        if (mCanvas != null) {
-            return mCanvas.getWidth();
-        }
-        return 0;
+        return width;
     }
 
     @Override
     public int getHeight() {
-        if (mCanvas != null) {
-            return mCanvas.getHeight();
-        }
-        return 0;
+        return height;
     }
 
     @Override

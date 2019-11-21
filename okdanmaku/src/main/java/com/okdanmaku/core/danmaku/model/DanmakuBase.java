@@ -41,7 +41,7 @@ public abstract class DanmakuBase {
     public float paintHeight = -1;
 
     /**
-     * 显示时间(毫秒)
+     * 出现时间(毫秒)
      */
     public long time;
 
@@ -92,5 +92,7 @@ public abstract class DanmakuBase {
     public abstract float getRight();
 
     public abstract float getBottom();
+
+    public abstract boolean isShown();
 
 }

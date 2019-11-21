@@ -74,8 +74,14 @@ public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Cal
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
         LogUtils.e("surfaceDestroyed");
         quitDrawThread();
+        super.onDetachedFromWindow();
     }
 
     @Override
@@ -85,7 +91,7 @@ public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Cal
     }
 
     private void updateTimer() {
-        mTimer.curMillisecond += 16;
+        mTimer.curMillisecond += 100;
     }
 
     private void updateCxCy(float x, float y) {
@@ -119,7 +125,7 @@ public class DanmakuSurfaceView extends SurfaceView implements SurfaceHolder.Cal
             DrawHelper.clearCanvas(canvas);
             DrawHelper.drawDuration(canvas, "sssss");
             if (mDrawTask == null) {
-                mDrawTask = new DrawTask(mTimer, getContext());
+                mDrawTask = new DrawTask(mTimer, getContext(), canvas.getWidth(), canvas.getHeight());
             }
             mDrawTask.draw(canvas);
 
