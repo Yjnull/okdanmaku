@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import com.okdanmaku.core.R;
 import com.okdanmaku.core.danmaku.loader.android.BiliDanmakuLoader;
 import com.okdanmaku.core.danmaku.loader.android.DanmakuLoaderFactory;
-import com.okdanmaku.core.danmaku.model.DanmakuBase;
 import com.okdanmaku.core.danmaku.model.DanmakuTimer;
 import com.okdanmaku.core.danmaku.model.IDanmakus;
 import com.okdanmaku.core.danmaku.model.android.AndroidDisplayer;
@@ -33,7 +32,6 @@ public class DrawTask {
     private IDataSource mDataSource;
     private BiliDanmakuParser mParser;
     private Danmakus mDanmakuList;
-    private final long duration;
 
     /**
      * 构造函数初始化，并通过 Loader 和 Parser 将 R.raw.comments 解析成 Danmakus
@@ -44,7 +42,6 @@ public class DrawTask {
         mDisp = new AndroidDisplayer();
         mDisp.width = dispW;
         mDisp.height = dispH;
-        duration = BiliDanmakuFactory.calDuration(dispW);
         loadBiliDanmakus(context.getResources().openRawResource(R.raw.comments));
     }
 
@@ -57,12 +54,7 @@ public class DrawTask {
         mDataSource = mLoader.getDataSource();
         mParser = new BiliDanmakuParser(mDisp.width);
         mParser.load(mDataSource);
-        mDanmakuList = mParser.parse();
-
-        // 给所有 DanmakuBase 设置 DanmakuSurfaceView 的 Timer
-        for (DanmakuBase itr : mDanmakuList.items) {
-            itr.setTimer(mTimer);
-        }
+        mDanmakuList = mParser.parse(mTimer);
     }
 
     /**
@@ -71,10 +63,11 @@ public class DrawTask {
     public void draw(Canvas canvas) {
         if (mDanmakuList != null) {
             long curMills = mTimer.curMillisecond;
-            IDanmakus danmakus = mDanmakuList.sub(curMills - duration, curMills + duration);
-            // 显示器有了画布
-            mDisp.init(canvas);
+            IDanmakus danmakus = mDanmakuList.sub(curMills - BiliDanmakuFactory.REAL_DANMAKU_DURATION,
+                    curMills + BiliDanmakuFactory.REAL_DANMAKU_DURATION);
             if (danmakus != null) {
+                // 显示器更新画布
+                mDisp.update(canvas);
                 // 让渲染器去画该弹幕
                 mRenderer.draw(mDisp, danmakus);
             }

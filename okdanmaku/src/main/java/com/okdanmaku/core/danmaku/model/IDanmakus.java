@@ -5,7 +5,9 @@ package com.okdanmaku.core.danmaku.model;
  */
 public interface IDanmakus {
 
-    void addItem(DanmakuBase item);
+    void addItem(BaseDanmaku item);
+
+    void removeItem(BaseDanmaku item);
 
     IDanmakus sub(long startTime, long endTime);
 }

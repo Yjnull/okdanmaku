@@ -4,7 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
-import com.okdanmaku.core.danmaku.model.DanmakuBase;
+import com.okdanmaku.core.danmaku.model.BaseDanmaku;
 import com.okdanmaku.core.danmaku.model.IDisplayer;
 
 /**
@@ -24,13 +24,13 @@ public class AndroidDisplayer implements IDisplayer {
     public int width;
     public int height;
 
-    private static Paint getPaint(DanmakuBase danmaku) {
-        sPaint.setTextSize(danmaku.textSize * 2);
+    private static Paint getPaint(BaseDanmaku danmaku) {
+        sPaint.setTextSize(danmaku.textSize);
         sPaint.setColor(danmaku.textColor);
         return sPaint;
     }
 
-    public void init(Canvas c) {
+    public void update(Canvas c) {
         mCanvas = c;
         if (c != null) {
             width = c.getWidth();
@@ -49,14 +49,14 @@ public class AndroidDisplayer implements IDisplayer {
     }
 
     @Override
-    public void measure(DanmakuBase danmaku) {
+    public void measure(BaseDanmaku danmaku) {
         Paint paint = getPaint(danmaku);
         danmaku.paintWidth = paint.measureText(danmaku.text);
         danmaku.paintHeight = paint.getTextSize();
     }
 
     @Override
-    public void draw(DanmakuBase danmaku) {
+    public void draw(BaseDanmaku danmaku) {
         if (mCanvas != null) {
             Paint paint = getPaint(danmaku);
             // paint.ascent = -46.38672 when paint.textSize = 50

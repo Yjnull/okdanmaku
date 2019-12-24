@@ -9,8 +9,8 @@ public interface IDisplayer {
 
     int getHeight();
 
-    void measure(DanmakuBase danmaku);
+    void measure(BaseDanmaku danmaku);
 
-    void draw(DanmakuBase danmaku);
+    void draw(BaseDanmaku danmaku);
 
 }

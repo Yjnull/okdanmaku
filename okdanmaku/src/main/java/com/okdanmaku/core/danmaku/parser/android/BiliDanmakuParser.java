@@ -1,9 +1,9 @@
 package com.okdanmaku.core.danmaku.parser.android;
 
-import com.okdanmaku.core.danmaku.model.DanmakuBase;
+import com.okdanmaku.core.danmaku.model.BaseDanmaku;
 import com.okdanmaku.core.danmaku.model.android.Danmakus;
 import com.okdanmaku.core.danmaku.parser.BiliDanmakuFactory;
-import com.okdanmaku.core.danmaku.parser.DanmakuParserBase;
+import com.okdanmaku.core.danmaku.parser.BaseDanmakuParser;
 import com.okdanmaku.core.danmaku.parser.IDataSource;
 
 import org.xml.sax.Attributes;
@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by yangya on 2019-11-19.
  */
-public class BiliDanmakuParser extends DanmakuParserBase {
+public class BiliDanmakuParser extends BaseDanmakuParser {
 
     static {
         System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
@@ -53,7 +53,7 @@ public class BiliDanmakuParser extends DanmakuParserBase {
 
     private class XmlContentHandler extends DefaultHandler {
         private Danmakus result = null;
-        private DanmakuBase item = null;
+        private BaseDanmaku item = null;
         private boolean completed = false;
         private int index = 0;
 
@@ -103,7 +103,7 @@ public class BiliDanmakuParser extends DanmakuParserBase {
                     item = BiliDanmakuFactory.createDanmaku(type, dispWidth);
                     if (item != null) {
                         item.time = time;
-                        item.textSize = textSize;
+                        item.textSize = textSize * 2;
                         item.textColor = color;
                     }
                 }
@@ -115,6 +115,8 @@ public class BiliDanmakuParser extends DanmakuParserBase {
             if (item != null) {
                 String tagName = localName.length() != 0 ? localName : qName;
                 if ("d".equalsIgnoreCase(tagName)) {
+                    // 给每一个 DanmakuBase 设置 DanmakuSurfaceView 的 Timer
+                    item.setTimer(mTimer);
                     result.addItem(item);
                 }
                 item = null;

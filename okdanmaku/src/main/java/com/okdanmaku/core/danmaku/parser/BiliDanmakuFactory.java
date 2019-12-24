@@ -1,6 +1,6 @@
 package com.okdanmaku.core.danmaku.parser;
 
-import com.okdanmaku.core.danmaku.model.DanmakuBase;
+import com.okdanmaku.core.danmaku.model.BaseDanmaku;
 import com.okdanmaku.core.danmaku.model.R2LDanmaku;
 
 /**
@@ -14,8 +14,10 @@ public class BiliDanmakuFactory {
 
     public static long COMMON_DANMAKU_DURATION = 4000;
 
-    public static DanmakuBase createDanmaku(int type, float dispWidth) {
-        DanmakuBase instance = null;
+    public static long REAL_DANMAKU_DURATION = -1;
+
+    public static BaseDanmaku createDanmaku(int type, float dispWidth) {
+        BaseDanmaku instance = null;
         if (type == 1) {
             instance = new R2LDanmaku(calDuration(dispWidth));
         }
@@ -24,11 +26,14 @@ public class BiliDanmakuFactory {
         return instance;
     }
 
-    public static void updateDanmakuDuration(DanmakuBase danmaku, float dispWidth) {
+    public static void updateDanmakuDuration(BaseDanmaku danmaku, float dispWidth) {
         danmaku.duration = calDuration(dispWidth);
     }
 
     public static long calDuration(float dispWidth) {
-        return (long) (COMMON_DANMAKU_DURATION * (dispWidth / BILI_PLAYER_WIDTH));
+        if (REAL_DANMAKU_DURATION == -1) {
+            REAL_DANMAKU_DURATION = (long) (COMMON_DANMAKU_DURATION * (dispWidth / BILI_PLAYER_WIDTH));
+        }
+        return REAL_DANMAKU_DURATION;
     }
 }
